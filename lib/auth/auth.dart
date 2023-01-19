@@ -1,24 +1,25 @@
-import 'package:bluecolorguy/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../model/user_model.dart';
 
 class AuthService {
   // final usersdata = FirebaseFirestore.instance.collection("Users");
-  final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String? email, username, password, conpassword, uid, image;
-  UserModel? _userFromFirebase(auth.User? user) {
+  UserModel? _userFromFirebase(User? user) {
     if (user == null) {
       return null;
     }
+
     return UserModel(
       uid: user.uid,
       email: user.email,
-      image: image,
     );
   }
 
   Stream<UserModel?>? get user {
-    return _firebaseAuth.authStateChanges().map(
+    return firebaseAuth.authStateChanges().map(
           (_userFromFirebase),
         );
   }
@@ -27,7 +28,7 @@ class AuthService {
     String email,
     String password,
   ) async {
-    final creadential = await _firebaseAuth.signInWithEmailAndPassword(
+    final creadential = await firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
   }
 
@@ -38,17 +39,18 @@ class AuthService {
 
     // String? image,
   ) async {
-    final credential = await _firebaseAuth
+    final credential = await firebaseAuth
         .createUserWithEmailAndPassword(
       email: email,
       password: password,
     )
         .then(
       (value) {
-        FirebaseFirestore.instance.collection('User1').doc(value.user?.uid).set(
+        FirebaseFirestore.instance.collection('user').doc(value.user!.uid).set(
           {
             "email": value.user!.email,
             "username": username,
+            "uid": value.user!.uid,
           },
         );
       },
@@ -58,7 +60,7 @@ class AuthService {
   }
 
   Future<void> SignOut() async {
-    return await _firebaseAuth.signOut();
+    return await firebaseAuth.signOut();
   }
 
   // Future<void> crateValue(

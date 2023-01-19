@@ -1,11 +1,10 @@
-import 'package:bluecolorguy/auth/auth.dart';
-import 'package:bluecolorguy/pages/homeview.dart';
-import 'package:bluecolorguy/auth/registration.dart';
-
-import 'package:bluecolorguy/auth/signin.dart';
-import 'package:bluecolorguy/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'auth/auth.dart';
+import 'auth/signin.dart';
+import 'model/user_model.dart';
+import 'pages/homeview.dart';
 
 class Root extends StatelessWidget {
   const Root({super.key});

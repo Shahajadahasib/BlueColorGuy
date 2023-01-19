@@ -1,8 +1,9 @@
-import 'package:bluecolorguy/auth/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import '../auth/auth.dart';
 
 class Homeviews extends StatefulWidget {
   const Homeviews({super.key});
@@ -16,50 +17,18 @@ class _HomeviewState extends State<Homeviews> {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final size = MediaQuery.of(context).size;
-    // const url = "https://www.google.com/";
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        title: const Image(
+          height: 70,
+          image: AssetImage('assets/images/logo2.jpg'),
+        ),
+      ),
       body: Column(
         children: [
-          Container(
-            height: 110,
-            color: Colors.black,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Portal",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
-                ),
-                Container(
-                  // color: Colors.green,
-                  child: const Image(
-                    height: 70,
-                    image: AssetImage('assets/images/logo.png'),
-                    // child: const Text("data")
-                  ),
-                ),
-                Material(
-                  color: const Color.fromARGB(255, 55, 54, 54),
-                  borderRadius: BorderRadius.circular(10),
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: const Icon(
-                      size: 32,
-                      Icons.account_circle,
-                      color: Colors.white,
-                    ),
-                    onPressed: (() {
-                      authService.SignOut();
-                    }),
-                  ),
-                ),
-              ],
-            ),
-          ),
           Link(
             target: LinkTarget.defaultTarget,
             uri: Uri.parse("https://myprofreelancer.com/"),
@@ -135,29 +104,6 @@ class _HomeviewState extends State<Homeviews> {
               ),
             ),
           ),
-
-          // Container(
-          //   height: size.height / 12,
-          //   width: size.width,
-          //   decoration: const BoxDecoration(
-          //     color: Color.fromARGB(255, 35, 35, 35),
-          //     image: DecorationImage(
-          //       image: AssetImage('assets/images/myprofreelancer-Logo.png'),
-          //     ),
-          //   ),
-          //   child: Row(
-          //     children: [
-          //       Link(
-          //         target: LinkTarget.defaultTarget,
-          //         uri: Uri.parse("https://myprofreelancer.com/"),
-          //         builder: (context, followLink) => InkWell(
-          //           onTap: followLink,
-          //           child: const Text('Open Link'),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Container(
             child: Center(
               child: Link(
@@ -170,31 +116,6 @@ class _HomeviewState extends State<Homeviews> {
               ),
             ),
           ),
-
-          // TextButton(
-          //   onPressed: () async {
-          //     const url = "https://bluecollarguy.ca/";
-          //     if (await launchUrl(
-          //       Uri.parse(url),
-          //     )) {
-          //       await canLaunchUrl(Uri.parse(url));
-          //     } else {
-          //       throw 'Could not launch $url';
-          //     }
-          //   },
-          //   child: const Text(
-          //     'Open a URL',
-          //   ),
-          // ),
-
-          // Link(
-          //     uri: Uri.parse("https://flutter.dev"),
-          //     builder: (BuildContext context, followLink) => ElevatedButton(
-          //           child: Text('iasfsbcz'),
-          //           onPressed: followLink,
-          //           // ... other properties here ...
-          //         )),
-
           Expanded(
             child: Card(
               elevation: 10,
@@ -282,13 +203,13 @@ class _HomeviewState extends State<Homeviews> {
                               alignment: Alignment.bottomRight,
                               child: TextButton(
                                 onPressed: () {},
-                                child: const Text(
-                                  "Done",
-                                  style: TextStyle(color: Colors.white),
-                                ),
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateProperty.all(Colors.blue),
+                                ),
+                                child: const Text(
+                                  "Done",
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ),
@@ -298,17 +219,69 @@ class _HomeviewState extends State<Homeviews> {
                     ],
                   ));
         },
+        backgroundColor: Colors.black,
         child: const Icon(
           Icons.add_circle,
           size: 34,
         ),
-        backgroundColor: Colors.black,
       ),
       drawer: Drawer(
         elevation: 10,
-        backgroundColor: Colors.green,
-        width: size.width / 2,
-        child: const Text("data"),
+        // backgroundColor: Colors.black,
+        // width: size.width / 2,
+        child: Container(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  const Image(
+                    image: AssetImage('assets/images/logo2.jpg'),
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('user')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      }
+
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return ListTile(
+                        title: Column(
+                          children: [
+                            Text(
+                              snapshot.requireData.docs.first.get('username'),
+                            ),
+                            Text(
+                              snapshot.requireData.docs.first.get('email'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  Card(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(5),
+                      onTap: () {
+                        authService.SignOut();
+                      },
+                      child: const ListTile(
+                        title: Center(child: Text('Log Out')),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,8 +1,9 @@
-import 'package:bluecolorguy/auth/auth.dart';
-import 'package:bluecolorguy/auth/registration.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'auth.dart';
+import 'registration.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
