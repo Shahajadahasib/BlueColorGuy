@@ -143,12 +143,3 @@ class _HomePageState extends State<Registration> {
     );
   }
 }
-
-
-
-
-
-//  await authService.createUserWithEmailAndPassword(
-//                     usernamecontroller.text,
-//                     emailcontroller.text,
-//                     passwordcontroller.text,
