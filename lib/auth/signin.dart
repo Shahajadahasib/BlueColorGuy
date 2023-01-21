@@ -46,6 +46,7 @@ class _SignInState extends State<SignIn> {
                 TextFormField(
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
+                  textCapitalization: TextCapitalization.sentences,
                   controller: emailcontroller,
                   style: const TextStyle(fontSize: 18),
                   decoration: InputDecoration(

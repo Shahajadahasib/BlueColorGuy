@@ -49,6 +49,7 @@ class _HomePageState extends State<Registration> {
                 TextFormField(
                   textInputAction: TextInputAction.next,
                   controller: usernamecontroller,
+                  textCapitalization: TextCapitalization.words,
                   style: const TextStyle(fontSize: 18),
                   decoration: InputDecoration(
                     label: const Text("Name"),
@@ -64,6 +65,7 @@ class _HomePageState extends State<Registration> {
                 TextFormField(
                   textInputAction: TextInputAction.next,
                   controller: emailcontroller,
+                  textCapitalization: TextCapitalization.sentences,
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(fontSize: 18),
                   decoration: InputDecoration(
