@@ -15,13 +15,18 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
+  @override
+  void dispose() {
+    emailcontroller.dispose();
+    passwordcontroller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 234, 236, 255),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -72,35 +77,30 @@ class _SignInState extends State<SignIn> {
                 const SizedBox(
                   height: 15,
                 ),
-                Material(
-                  color: const Color.fromARGB(255, 160, 212, 225),
-                  borderRadius: BorderRadius.circular(8),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () async {
+                ElevatedButton(
+                    onPressed: () async {
                       await authService.signInWithEmailAndPassword(
                         emailcontroller.text,
                         passwordcontroller.text,
                       );
                     },
                     child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50, vertical: 17),
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         "Sign in",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500),
                       ),
-                    ),
-                  ),
-                ),
+                    )),
                 const SizedBox(
                   height: 10,
                 ),
                 RichText(
                   text: TextSpan(
                     text: "You don't have account? ",
-                    style: const TextStyle(fontSize: 13, color: Colors.black),
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
                     children: [
                       TextSpan(
                         text: 'Registration',

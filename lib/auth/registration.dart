@@ -30,7 +30,6 @@ class _HomePageState extends State<Registration> {
     final authService = Provider.of<AuthService>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 234, 236, 255),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -59,7 +58,7 @@ class _HomePageState extends State<Registration> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 TextFormField(
@@ -75,7 +74,7 @@ class _HomePageState extends State<Registration> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 TextFormField(
@@ -89,15 +88,11 @@ class _HomePageState extends State<Registration> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Material(
-                  color: const Color.fromARGB(255, 160, 212, 225),
-                  borderRadius: BorderRadius.circular(8),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () async {
+                ElevatedButton(
+                    onPressed: () async {
                       await authService.createUserWithEmailAndPassword(
                         usernamecontroller.text,
                         emailcontroller.text,
@@ -105,23 +100,22 @@ class _HomePageState extends State<Registration> {
                       );
                     },
                     child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50, vertical: 17),
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         "Sign Up",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500),
                       ),
-                    ),
-                  ),
-                ),
+                    )),
                 const SizedBox(
                   height: 10,
                 ),
                 RichText(
                   text: TextSpan(
                     text: "You Already have an account? ",
-                    style: const TextStyle(fontSize: 13, color: Colors.black),
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
                     children: [
                       TextSpan(
                         text: 'Sign in',
