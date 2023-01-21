@@ -1,24 +1,35 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
 
 import '../auth/auth.dart';
+import '../model/portalmodel.dart';
+import '../provider/dataprovider.dart';
 
 class Homeviews extends StatefulWidget {
   const Homeviews({super.key});
 
   @override
-  State<Homeviews> createState() => _HomeviewState();
+  State<Homeviews> createState() => _HomeviewsState();
 }
 
-class _HomeviewState extends State<Homeviews> {
+class _HomeviewsState extends State<Homeviews> {
+  final nameController = TextEditingController(text: 'Hasib');
+  final urlController = TextEditingController(text: 'https://www.google.com/');
+  final numberController = TextEditingController(text: '01849945526');
+
+  final GlobalKey<FormState> _addPortalformKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
@@ -31,51 +42,14 @@ class _HomeviewState extends State<Homeviews> {
         children: [
           Link(
             target: LinkTarget.defaultTarget,
-            uri: Uri.parse("https://myprofreelancer.com/"),
-            builder: (context, followLink) => InkWell(
-              onTap: followLink,
-              child: Stack(
-                children: [
-                  Container(
-                    height: size.height / 12,
-                    width: size.width,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 35, 35, 35),
-                      image: DecorationImage(
-                        image: AssetImage(
-                            'assets/images/myprofreelancer-Logo.png'),
-                      ),
-                    ),
-                  ),
-                  const Positioned(
-                    right: 10,
-                    top: 8,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Link(
-            target: LinkTarget.defaultTarget,
             uri: Uri.parse("https://bluecollarguy.ca/"),
             builder: (context, followLink) => InkWell(
               onTap: followLink,
               child: Row(
                 children: [
-                  Container(
+                  SizedBox(
                     height: size.height / 12,
                     width: size.width,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 38, 34, 34),
-                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -95,7 +69,6 @@ class _HomeviewState extends State<Homeviews> {
                         Icon(
                           Icons.arrow_forward_ios,
                           size: 30,
-                          color: Colors.white,
                         ),
                       ],
                     ),
@@ -104,122 +77,176 @@ class _HomeviewState extends State<Homeviews> {
               ),
             ),
           ),
-          Container(
-            child: Center(
-              child: Link(
-                target: LinkTarget.defaultTarget,
-                uri: Uri.parse("https://bluecollarguy.ca/"),
-                builder: (context, followLink) => InkWell(
-                  onTap: followLink,
-                  child: const Text('Open Link'),
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: Card(
               elevation: 10,
-              color: Colors.green,
-              child: ListView(
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  final data = PortalModel(
+                    portalName:
+                        context.watch<DataProvider>().portals[index].portalName,
+                    portalUrl:
+                        context.watch<DataProvider>().portals[index].portalUrl,
+                    phoneNumber: context
+                        .watch<DataProvider>()
+                        .portals[index]
+                        .phoneNumber,
+                  );
+                  return _buildCard(portalData: data);
+                },
+                itemCount: context.watch<DataProvider>().portals.length,
                 padding: const EdgeInsets.all(8),
-                children: const [
-                  Card(
-                      child: ListTile(
-                          title: Text("Dr. Devid Jons"),
-                          subtitle: Text("www.media.com"),
-                          leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  "https://images.unsplash.com/photo-1547721064-da6cfb341d50")),
-                          trailing: Icon(Icons.open_in_new))),
-                  Card(
-                      child: ListTile(
-                          title: Text("Lawyer"),
-                          subtitle: Text("Lower the anchor."),
-                          leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  "https://miro.medium.com/fit/c/64/64/1*WSdkXxKtD8m54-1xp75cqQ.jpeg")),
-                          trailing: Icon(Icons.open_in_new))),
-                  Card(
-                      child: ListTile(
-                          title: Text("Alarm"),
-                          subtitle: Text("This is the time."),
-                          leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  "https://miro.medium.com/fit/c/64/64/1*WSdkXxKtD8m54-1xp75cqQ.jpeg")),
-                          trailing: Icon(Icons.open_in_new))),
-                  Card(
-                      child: ListTile(
-                          title: Text("Ballot"),
-                          subtitle: Text("Cast your vote."),
-                          leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  "https://miro.medium.com/fit/c/64/64/1*WSdkXxKtD8m54-1xp75cqQ.jpeg")),
-                          trailing: Icon(Icons.open_in_new)))
+              ),
+            ),
+          ),
+          Link(
+            target: LinkTarget.defaultTarget,
+            uri: Uri.parse("https://myprofreelancer.com/"),
+            builder: (context, followLink) => InkWell(
+              onTap: followLink,
+              child: Stack(
+                children: [
+                  Container(
+                    height: size.height / 12,
+                    width: size.width,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                            'assets/images/myprofreelancer-Logo.png'),
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    right: 10,
+                    top: 8,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 30,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: const [
-                                Icon(
-                                  Icons.facebook,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text("This is the name of title"),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            TextFormField(
-                              // cursorHeight: 10,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                labelText: "Past you Url",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onChanged: (value) {},
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: TextButton(
-                                onPressed: () {},
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.blue),
-                                ),
-                                child: const Text(
-                                  "Done",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
+            context: context,
+            builder: (context) => AlertDialog(
+              content: SingleChildScrollView(
+                child: Form(
+                  key: _addPortalformKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Add Portal',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        textCapitalization: TextCapitalization.words,
+                        controller: nameController,
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: "Enter Portal Name",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        validator: RequiredValidator(
+                            errorText: 'Portal Name is required'),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: urlController,
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.url,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: "Paste you Url",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        validator:
+                            RequiredValidator(errorText: 'Url is required'),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: numberController,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.number,
+                        validator:
+                            RequiredValidator(errorText: 'Number is required'),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: "Enter Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                     ],
-                  ));
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    nameController.clear();
+                    urlController.clear();
+                    numberController.clear();
+                  },
+                  child: const Text(
+                    "Clear",
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (_addPortalformKey.currentState!.validate()) {
+                      final data = PortalModel(
+                        portalName: nameController.text.trim(),
+                        portalUrl: urlController.text.trim(),
+                        phoneNumber: numberController.text.trim(),
+                      );
+                      context.read<DataProvider>().addData(
+                            portalModel: data,
+                          );
+                      nameController.clear();
+                      urlController.clear();
+                      numberController.clear();
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text(
+                    "Done",
+                  ),
+                ),
+              ],
+            ),
+          );
         },
-        backgroundColor: Colors.black,
         child: const Icon(
           Icons.add_circle,
           size: 34,
@@ -227,59 +254,117 @@ class _HomeviewState extends State<Homeviews> {
       ),
       drawer: Drawer(
         elevation: 10,
-        // backgroundColor: Colors.black,
-        // width: size.width / 2,
-        child: Container(
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const Image(
-                    image: AssetImage('assets/images/logo2.jpg'),
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('user')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(snapshot.error.toString()),
-                        );
-                      }
-
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return ListTile(
-                        title: Column(
-                          children: [
-                            Text(
-                              snapshot.requireData.docs.first.get('username'),
-                            ),
-                            Text(
-                              snapshot.requireData.docs.first.get('email'),
-                            ),
-                          ],
-                        ),
+        backgroundColor: Colors.black,
+        width: size.width / 1.5,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                const Image(
+                  image: AssetImage('assets/images/logo2.jpg'),
+                ),
+                StreamBuilder<QuerySnapshot>(
+                  stream:
+                      FirebaseFirestore.instance.collection('user').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.error.toString()),
                       );
-                    },
-                  ),
-                  Card(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(5),
-                      onTap: () {
-                        authService.SignOut();
-                      },
-                      child: const ListTile(
-                        title: Center(child: Text('Log Out')),
+                    }
+
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ListTile(
+                      title: Column(
+                        children: [
+                          Text(
+                            snapshot.requireData.docs.first.get('username'),
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            snapshot.requireData.docs.first.get('email'),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
                       ),
+                    );
+                  },
+                ),
+                Card(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(5),
+                    onTap: () {
+                      authService.signOut();
+                    },
+                    child: const ListTile(
+                      title: Center(child: Text('Log Out')),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard({
+    required PortalModel portalData,
+  }) {
+    return Card(
+      child: ListTile(
+        title: Text(portalData.portalName),
+        subtitle: Text(portalData.portalUrl),
+        leading: FutureBuilder<String>(
+          initialData: '',
+          future: context.read<DataProvider>().getFavcicoUrl(
+                url: portalData.portalUrl,
+              ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (snapshot.hasData) {
+              return CachedNetworkImage(
+                placeholder: (context, url) => const SizedBox(
+                  height: 32,
+                  width: 32,
+                  child: CircularProgressIndicator(),
+                ),
+                imageUrl: snapshot.data!,
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.error_outline,
+                  size: 32,
+                ),
+              );
+            }
+
+            return const Icon(
+              Icons.language_outlined,
+              size: 32,
+            );
+          },
+        ),
+        trailing: Link(
+          target: LinkTarget.defaultTarget,
+          uri: Uri(
+            scheme: 'tel',
+            path: portalData.phoneNumber,
+          ),
+          builder: (context, followLink) => GestureDetector(
+            onTap: followLink,
+            child: const Icon(Icons.phone),
           ),
         ),
       ),

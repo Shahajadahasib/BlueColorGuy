@@ -4,9 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../model/user_model.dart';
 
 class AuthService {
-  // final usersdata = FirebaseFirestore.instance.collection("Users");
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  String? email, username, password, conpassword, uid, image;
   UserModel? _userFromFirebase(User? user) {
     if (user == null) {
       return null;
@@ -28,8 +26,9 @@ class AuthService {
     String email,
     String password,
   ) async {
-    final creadential = await firebaseAuth.signInWithEmailAndPassword(
+    await firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
+    return null;
   }
 
   Future<UserModel?> createUserWithEmailAndPassword(
@@ -59,22 +58,7 @@ class AuthService {
     return _userFromFirebase(credential.user);
   }
 
-  Future<void> SignOut() async {
+  Future<void> signOut() async {
     return await firebaseAuth.signOut();
   }
-
-  // Future<void> crateValue(
-  //   String username,
-  //   String uid,
-  //   String email,
-  // ) async {
-  //   final usersdata = FirebaseFirestore.instance.collection(
-  //       "Users"); //FirebaseFirestore.instance.collection(_firebaseAuth.currentUser!.uid);
-  //   usersdata.add({
-  //     'displayname': username,
-  //     'uid': _firebaseAuth.currentUser!.uid,
-  //     'email': email
-  //   });
-  //   return;
-  // }
 }

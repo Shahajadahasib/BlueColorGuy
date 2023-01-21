@@ -40,6 +40,9 @@ dependencies:
   firebase_auth: ^4.2.5
   provider: ^6.0.5
   url_launcher: ^6.1.7
+  form_field_validator: ^1.1.0
+  favicon: ^1.1.0
+  cached_network_image: ^3.2.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.11.0"
