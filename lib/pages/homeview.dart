@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
@@ -17,9 +18,9 @@ class Homeviews extends StatefulWidget {
 }
 
 class _HomeviewsState extends State<Homeviews> {
-  final nameController = TextEditingController(text: 'Hasib');
-  final urlController = TextEditingController(text: 'https://www.google.com/');
-  final numberController = TextEditingController(text: '01849945526');
+  final nameController = TextEditingController();
+  final urlController = TextEditingController();
+  final numberController = TextEditingController();
 
   final GlobalKey<FormState> _addPortalformKey = GlobalKey<FormState>();
 
@@ -78,25 +79,37 @@ class _HomeviewsState extends State<Homeviews> {
             ),
           ),
           Expanded(
-            child: Card(
-              elevation: 10,
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  final data = PortalModel(
-                    portalName:
-                        context.watch<DataProvider>().portals[index].portalName,
-                    portalUrl:
-                        context.watch<DataProvider>().portals[index].portalUrl,
-                    phoneNumber: context
-                        .watch<DataProvider>()
-                        .portals[index]
-                        .phoneNumber,
-                  );
-                  return _buildCard(portalData: data);
-                },
-                itemCount: context.watch<DataProvider>().portals.length,
-                padding: const EdgeInsets.all(8),
-              ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('user')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .collection('portals')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text("Loading");
+                }
+
+                return ListView(
+                  children: snapshot.data!.docs
+                      .map((DocumentSnapshot document) {
+                        Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                        return _buildCard(
+                          portalName: data['name'],
+                          portalUrl: data['portalUrl'],
+                          phoneNumber: data['phoneNumber'],
+                        );
+                      })
+                      .toList()
+                      .cast(),
+                );
+              },
             ),
           ),
           Link(
@@ -320,16 +333,18 @@ class _HomeviewsState extends State<Homeviews> {
   }
 
   Widget _buildCard({
-    required PortalModel portalData,
+    required String portalName,
+    required String portalUrl,
+    required String phoneNumber,
   }) {
     return Card(
       child: ListTile(
-        title: Text(portalData.portalName),
-        subtitle: Text(portalData.portalUrl),
+        title: Text(portalName),
+        subtitle: Text(portalUrl),
         leading: FutureBuilder<String>(
           initialData: '',
           future: context.read<DataProvider>().getFavcicoUrl(
-                url: portalData.portalUrl,
+                url: portalUrl,
               ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -360,7 +375,7 @@ class _HomeviewsState extends State<Homeviews> {
           target: LinkTarget.defaultTarget,
           uri: Uri(
             scheme: 'tel',
-            path: portalData.phoneNumber,
+            path: phoneNumber,
           ),
           builder: (context, followLink) => GestureDetector(
             onTap: followLink,
