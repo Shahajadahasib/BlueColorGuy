@@ -1,10 +1,13 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 import '../model/user_model.dart';
 
-class AuthService {
+class AuthService extends ChangeNotifier {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   UserModel? _userFromFirebase(User? user) {
     if (user == null) {
       return null;
@@ -25,40 +28,62 @@ class AuthService {
   Future<UserModel?> signInWithEmailAndPassword(
     String email,
     String password,
+    BuildContext context,
   ) async {
-    await firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-    return null;
+    try {
+      await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      final snackBar = SnackBar(
+        content: Text(e.code),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
-  Future<UserModel?> createUserWithEmailAndPassword(
-    String username,
-    String email,
-    String password,
+  Future<UserModel?> createUserWithEmailAndPassword(String username,
+      String email, String password, BuildContext context) async {
+    try {
+      final UserCredential credential =
+          await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    // String? image,
-  ) async {
-    final credential = await firebaseAuth
-        .createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    )
-        .then(
-      (value) {
-        FirebaseFirestore.instance.collection('user').doc(value.user!.uid).set(
-          {
-            "email": value.user!.email,
-            "username": username,
-            "uid": value.user!.uid,
-          },
-        );
-      },
-    );
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(credential.user!.uid)
+          .set(
+        {
+          "email": email,
+          "username": username,
+          "uid": credential.user!.uid,
+        },
+      );
+      // Navigator.pushAndRemoveUntil(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => const Homeviews(),
+      //   ),
+      //   (Route route) => false,
+      // );
+      Navigator.pop(context);
+      return _userFromFirebase(credential.user);
+    } on FirebaseAuthException catch (e) {
+      final snackBar = SnackBar(
+        content: Text(e.code),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    return _userFromFirebase(credential.user);
+    notifyListeners();
   }
 
   Future<void> signOut() async {
     return await firebaseAuth.signOut();
+  }
+
+  Future<void> deleteAccount() async {
+    return await firebaseAuth.currentUser!.delete();
   }
 }

@@ -328,7 +328,42 @@ class _HomeviewsState extends State<Homeviews> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(5),
                     onTap: () {
-                      authService.deleteAccount();
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: const Text('Confirm Account Deletion'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    Text(
+                                        'Are you sure you want to delete your account?'),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                        'Once account is deleted it can\'t be undone!'),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      "Cancel",
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await authService.deleteAccount();
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      "Confirm",
+                                    ),
+                                  ),
+                                ],
+                              ));
                     },
                     child: const ListTile(
                       title: Center(child: Text('Delete Account')),

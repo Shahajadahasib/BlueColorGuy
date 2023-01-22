@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 
 import 'auth.dart';
@@ -15,6 +16,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
+  final GlobalKey<FormState> _signinformKey = GlobalKey<FormState>();
   @override
   void dispose() {
     emailcontroller.dispose();
@@ -31,97 +33,107 @@ class _SignInState extends State<SignIn> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(right: 25.0, left: 25),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: size.height / 9,
-                ),
-                const CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/logo2.jpg'),
-                  radius: 80,
-                ),
-                SizedBox(
-                  height: size.height / 16,
-                ),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.emailAddress,
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: emailcontroller,
-                  style: const TextStyle(fontSize: 18),
-                  decoration: InputDecoration(
-                    fillColor: Colors.black,
-                    label: const Text("Email"),
-                    isDense: true,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+            child: Form(
+              key: _signinformKey,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: size.height / 9,
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  textInputAction: TextInputAction.done,
-                  style: const TextStyle(fontSize: 18),
-                  controller: passwordcontroller,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    label: const Text("Password"),
-                    isDense: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  const CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/logo2.jpg'),
+                    radius: 80,
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                ElevatedButton(
-                    onPressed: () async {
-                      await authService.signInWithEmailAndPassword(
-                        emailcontroller.text,
-                        passwordcontroller.text,
-                      );
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Sign in",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: size.height / 16,
+                  ),
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: emailcontroller,
+                    style: const TextStyle(fontSize: 18),
+                    validator:
+                        RequiredValidator(errorText: 'Email is required'),
+                    decoration: InputDecoration(
+                      fillColor: Colors.black,
+                      label: const Text("Email"),
+                      isDense: true,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    )),
-                const SizedBox(
-                  height: 10,
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: "You don't have account? ",
-                    style: const TextStyle(
-                      fontSize: 13,
                     ),
-                    children: [
-                      TextSpan(
-                        text: 'Registration',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: Colors.blue,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(fontSize: 18),
+                    controller: passwordcontroller,
+                    obscureText: true,
+                    validator:
+                        RequiredValidator(errorText: 'Password is required'),
+                    decoration: InputDecoration(
+                      label: const Text("Password"),
+                      isDense: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        if (_signinformKey.currentState!.validate()) {
+                          await authService.signInWithEmailAndPassword(
+                            emailcontroller.text,
+                            passwordcontroller.text,
+                            context,
+                          );
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Sign in",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Registration(),
-                                ),
-                              ),
-                      ),
-                    ],
+                      )),
+                  const SizedBox(
+                    height: 10,
                   ),
-                )
-              ],
+                  RichText(
+                    text: TextSpan(
+                      text: "You don't have account? ",
+                      style: const TextStyle(
+                        fontSize: 13,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Registration',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: Colors.blue,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Registration(),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -129,12 +141,3 @@ class _SignInState extends State<SignIn> {
     );
   }
 }
-
-
-
-// Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => const Registration(),
-//                         ),
-//                       );
