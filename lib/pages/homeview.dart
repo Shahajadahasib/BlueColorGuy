@@ -324,6 +324,17 @@ class _HomeviewsState extends State<Homeviews> {
                     ),
                   ),
                 ),
+                Card(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(5),
+                    onTap: () {
+                      authService.deleteAccount();
+                    },
+                    child: const ListTile(
+                      title: Center(child: Text('Delete Account')),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
