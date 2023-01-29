@@ -337,49 +337,62 @@ class _HomeviewsState extends State<Homeviews> {
     required String portalUrl,
     required String phoneNumber,
   }) {
-    return Card(
-      child: ListTile(
-        title: Text(portalName),
-        subtitle: Text(portalUrl),
-        leading: FutureBuilder<String>(
-          initialData: '',
-          future: context.read<DataProvider>().getFavcicoUrl(
-                url: portalUrl,
-              ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            if (snapshot.hasData) {
-              return CachedNetworkImage(
-                placeholder: (context, url) => const SizedBox(
-                  height: 32,
-                  width: 32,
-                  child: CircularProgressIndicator(),
-                ),
-                imageUrl: snapshot.data!,
-                errorWidget: (context, url, error) => const Icon(
-                  Icons.error_outline,
-                  size: 32,
-                ),
-              );
-            }
+    String url = '';
+    if (portalUrl.startsWith('https://')) {
+      url = portalUrl;
+    } else {
+      url = 'https://$portalUrl';
+    }
+    return Link(
+      target: LinkTarget.defaultTarget,
+      uri: Uri.parse(url),
+      builder: (context, followLink) => GestureDetector(
+        onTap: followLink,
+        child: Card(
+          child: ListTile(
+            title: Text(portalName),
+            subtitle: Text(portalUrl),
+            leading: FutureBuilder<String>(
+              initialData: '',
+              future: context.read<DataProvider>().getFavcicoUrl(
+                    url: portalUrl,
+                  ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasData) {
+                  return CachedNetworkImage(
+                    placeholder: (context, url) => const SizedBox(
+                      height: 32,
+                      width: 32,
+                      child: CircularProgressIndicator(),
+                    ),
+                    imageUrl: snapshot.data!,
+                    errorWidget: (context, url, error) => const Icon(
+                      Icons.error_outline,
+                      size: 32,
+                    ),
+                  );
+                }
 
-            return const Icon(
-              Icons.language_outlined,
-              size: 32,
-            );
-          },
-        ),
-        trailing: Link(
-          target: LinkTarget.defaultTarget,
-          uri: Uri(
-            scheme: 'tel',
-            path: phoneNumber,
-          ),
-          builder: (context, followLink) => GestureDetector(
-            onTap: followLink,
-            child: const Icon(Icons.phone),
+                return const Icon(
+                  Icons.language_outlined,
+                  size: 32,
+                );
+              },
+            ),
+            trailing: Link(
+              target: LinkTarget.defaultTarget,
+              uri: Uri(
+                scheme: 'tel',
+                path: phoneNumber,
+              ),
+              builder: (context, followLink) => GestureDetector(
+                onTap: followLink,
+                child: const Icon(Icons.phone),
+              ),
+            ),
           ),
         ),
       ),
