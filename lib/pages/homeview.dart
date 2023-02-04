@@ -95,19 +95,43 @@ class _HomeviewsState extends State<Homeviews> {
                   return const Text("Loading");
                 }
 
-                return ListView(
-                  children: snapshot.data!.docs
-                      .map((DocumentSnapshot document) {
-                        Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
-                        return _buildCard(
-                          portalName: data['name'],
-                          portalUrl: data['portalUrl'],
-                          phoneNumber: data['phoneNumber'],
-                        );
-                      })
-                      .toList()
-                      .cast(),
+                // return ListView(
+                //   children: snapshot.data!.docs
+                //       .map((DocumentSnapshot document) {
+                //         Map<String, dynamic> data =
+                //             document.data()! as Map<String, dynamic>;
+                //         log(data.toString());
+                //         return _buildCard(
+                //           onLongTap: () async {
+
+                //           },
+                //           portalName: data['name'],
+                //           portalUrl: data['portalUrl'],
+                //           phoneNumber: data['phoneNumber'],
+                //         );
+                //       })
+                //       .toList()
+                //       .cast(),
+                // );
+
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var data = snapshot.data!.docs[index];
+
+                    return _buildCard(
+                      onLongTap: () async {
+                        await FirebaseFirestore.instance
+                            .runTransaction((Transaction myTransaction) async {
+                          await myTransaction.delete(data.reference);
+                        });
+                        Navigator.pop(context);
+                      },
+                      portalName: data['name'],
+                      portalUrl: data['portalUrl'],
+                      phoneNumber: data['phoneNumber'],
+                    );
+                  },
                 );
               },
             ),
@@ -382,6 +406,7 @@ class _HomeviewsState extends State<Homeviews> {
     required String portalName,
     required String portalUrl,
     required String phoneNumber,
+    required Function onLongTap,
   }) {
     String url = '';
     if (portalUrl.startsWith('https://')) {
@@ -393,6 +418,41 @@ class _HomeviewsState extends State<Homeviews> {
       target: LinkTarget.defaultTarget,
       uri: Uri.parse(url),
       builder: (context, followLink) => GestureDetector(
+        onLongPress: () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: const Text('Confirm Portal Deletion'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Text('Are you sure you want to delete the portal?'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text('Once portal is deleted it can\'t be undone!'),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "Cancel",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          onLongTap();
+                        },
+                        child: const Text(
+                          "Confirm",
+                        ),
+                      ),
+                    ],
+                  ));
+        },
         onTap: followLink,
         child: Card(
           child: ListTile(

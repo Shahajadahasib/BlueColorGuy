@@ -11,9 +11,9 @@ class PortalModel {
 
   Map<String, dynamic> toFirestore() {
     return {
-      if (portalName != null) "name": portalName,
-      if (portalUrl != null) "portalUrl": portalUrl,
-      if (phoneNumber != null) "phoneNumber": phoneNumber,
+      "name": portalName,
+      "portalUrl": portalUrl,
+      "phoneNumber": phoneNumber,
     };
   }
 }

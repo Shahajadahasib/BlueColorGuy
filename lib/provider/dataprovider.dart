@@ -17,6 +17,19 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  deleteData({
+    required PortalModel portalModel,
+  }) {
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('portals')
+        .doc('')
+        .delete();
+
+    // notifyListeners();
+  }
+
   Future<String> getFavcicoUrl({required String url}) async {
     if (url.startsWith('https://')) {
       var iconUrl = await FaviconFinder.getBest(url);
