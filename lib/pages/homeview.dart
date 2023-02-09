@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
@@ -23,6 +26,22 @@ class _HomeviewsState extends State<Homeviews> {
   final numberController = TextEditingController();
 
   final GlobalKey<FormState> _addPortalformKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    Timer(
+      const Duration(milliseconds: 300),
+      () => FlutterNativeSplash.remove(),
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    urlController.dispose();
+    numberController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,25 +113,6 @@ class _HomeviewsState extends State<Homeviews> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Text("Loading");
                 }
-
-                // return ListView(
-                //   children: snapshot.data!.docs
-                //       .map((DocumentSnapshot document) {
-                //         Map<String, dynamic> data =
-                //             document.data()! as Map<String, dynamic>;
-                //         log(data.toString());
-                //         return _buildCard(
-                //           onLongTap: () async {
-
-                //           },
-                //           portalName: data['name'],
-                //           portalUrl: data['portalUrl'],
-                //           phoneNumber: data['phoneNumber'],
-                //         );
-                //       })
-                //       .toList()
-                //       .cast(),
-                // );
 
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,

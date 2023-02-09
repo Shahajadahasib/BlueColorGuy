@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +20,16 @@ class _SignInState extends State<SignIn> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
   final GlobalKey<FormState> _signinformKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    Timer(
+      const Duration(milliseconds: 300),
+      () => FlutterNativeSplash.remove(),
+    );
+
+    super.initState();
+  }
+
   @override
   void dispose() {
     emailcontroller.dispose();

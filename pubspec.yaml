@@ -43,10 +43,10 @@ dependencies:
   form_field_validator: ^1.1.0
   favicon: ^1.1.0
   cached_network_image: ^3.2.2
+  flutter_native_splash: ^2.2.16
 
 dev_dependencies:
   flutter_launcher_icons: "^0.11.0"
-  flutter_native_splash: ^2.2.16
 
   flutter_test:
     sdk: flutter
@@ -63,28 +63,17 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter_native_splash:
-  color: "#ffffff"
-  image: assets/images/logo.png
-  color_dark: "#121212"
-  image_dark: assets/images/logo.png
+  color: "#000000"
+  image: assets/images/logo2.jpg
+  color_dark: "#000000"
+  image_dark: assets/images/logo2.jpg
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo.png"
+  image_path: "assets/images/logo2.jpg"
   min_sdk_android: 21 # android min sdk min:16, default 21
-  web:
-    generate: true
-    image_path: "assets/images/logo.png"
-    background_color: "0xFF000000"
-    # theme_color: "0xFF000000"
-  windows:
-    generate: true
-    image_path: "assets/images/logo.png"
-    icon_size: 60 # min:48, max:256, default: 48
-  macos:
-    generate: true
-    image_path: "assets/images/logo.png"
+
 flutter:
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
