@@ -20,7 +20,7 @@
 
    </queries>
    <application
-        android:label="bluecolorguy"
+        android:label="Blue Collar Guy"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
