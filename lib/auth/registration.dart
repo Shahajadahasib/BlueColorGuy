@@ -14,9 +14,9 @@ class Registration extends StatefulWidget {
 }
 
 class _HomePageState extends State<Registration> {
-  final emailcontroller = TextEditingController(text: 'hasib@gmail.com');
-  final passwordcontroller = TextEditingController(text: '123456');
-  final usernamecontroller = TextEditingController(text: 'Hasib');
+  final emailcontroller = TextEditingController();
+  final passwordcontroller = TextEditingController();
+  final usernamecontroller = TextEditingController();
   final GlobalKey<FormState> _signupformKey = GlobalKey<FormState>();
   @override
   void dispose() {
