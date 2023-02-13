@@ -103,8 +103,8 @@ class _SignInState extends State<SignIn> {
                       onPressed: () async {
                         if (_signinformKey.currentState!.validate()) {
                           await authService.signInWithEmailAndPassword(
-                            emailcontroller.text,
-                            passwordcontroller.text,
+                            emailcontroller.text.trim(),
+                            passwordcontroller.text.trim(),
                             context,
                           );
                         }

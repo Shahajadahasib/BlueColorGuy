@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "902638626754",
-    "project_id": "blue-color-guy",
-    "storage_bucket": "blue-color-guy.appspot.com"
+    "project_number": "570157995182",
+    "project_id": "bluecollerguy-6d211",
+    "storage_bucket": "bluecollerguy-6d211.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:902638626754:android:a79633a66d5736f051d85b",
+        "mobilesdk_app_id": "1:570157995182:android:7bb211d5a8867abce8893f",
         "android_client_info": {
           "package_name": "com.example.bluecolorguy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "902638626754-tonld0qq40raufhmu3pmv9ogb7t2mhr8.apps.googleusercontent.com",
+          "client_id": "570157995182-opjcf8bt5k0akrc5632kd3q7p4qf0s52.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAzLBG7wI5_80CtJYpFQ4AAKImHwynB6yk"
+          "current_key": "AIzaSyDjQ9wvT9WgNHJA5gZZw9o9x8QwaA3C8Gg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "902638626754-tonld0qq40raufhmu3pmv9ogb7t2mhr8.apps.googleusercontent.com",
+              "client_id": "570157995182-opjcf8bt5k0akrc5632kd3q7p4qf0s52.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

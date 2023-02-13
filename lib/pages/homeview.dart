@@ -301,9 +301,11 @@ class _HomeviewsState extends State<Homeviews> {
                 const Image(
                   image: AssetImage('assets/images/logo2.jpg'),
                 ),
-                StreamBuilder<QuerySnapshot>(
-                  stream:
-                      FirebaseFirestore.instance.collection('user').snapshots(),
+                FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('user')
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .get(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Center(
@@ -318,7 +320,7 @@ class _HomeviewsState extends State<Homeviews> {
                       title: Column(
                         children: [
                           Text(
-                            snapshot.requireData.docs.first.get('username'),
+                            snapshot.requireData.get('username'),
                             style: const TextStyle(
                               fontSize: 18,
                             ),
@@ -327,7 +329,7 @@ class _HomeviewsState extends State<Homeviews> {
                             height: 10,
                           ),
                           Text(
-                            snapshot.requireData.docs.first.get('email'),
+                            snapshot.requireData.get('email'),
                           ),
                           const SizedBox(
                             height: 10,

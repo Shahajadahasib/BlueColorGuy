@@ -106,9 +106,9 @@ class _HomePageState extends State<Registration> {
                       onPressed: () async {
                         if (_signupformKey.currentState!.validate()) {
                           await authService.createUserWithEmailAndPassword(
-                            usernamecontroller.text,
-                            emailcontroller.text,
-                            passwordcontroller.text,
+                            usernamecontroller.text.trim(),
+                            emailcontroller.text.trim(),
+                            passwordcontroller.text.trim(),
                             context,
                           );
                         }

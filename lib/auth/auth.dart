@@ -83,6 +83,10 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> deleteAccount() async {
+    await FirebaseFirestore.instance
+        .collection('user')
+        .doc(firebaseAuth.currentUser!.uid)
+        .delete();
     return await firebaseAuth.currentUser!.delete();
   }
 }

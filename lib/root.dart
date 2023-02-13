@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +11,6 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('root');
     final authService = Provider.of<AuthService>(context);
 
     return StreamBuilder<UserModel?>(
@@ -21,7 +18,6 @@ class Root extends StatelessWidget {
       builder: (_, AsyncSnapshot<UserModel?> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final UserModel? user = snapshot.data;
-          log('user ${user?.uid}');
 
           return user == null ? const SignIn() : const Homeviews();
         } else {
